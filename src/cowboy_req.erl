@@ -1188,7 +1188,8 @@ response(Status, Headers, RespHeaders, DefaultHeaders, Body, Req=#http_req{
 			ReqPid ! {?MODULE, resp_sent},
 			normal;
 		RespState when RespState =:= waiting; RespState =:= waiting_stream ->
-			StatusLine = <<(status(Status2))/binary, "\r\n" >>,
+			StatusLine = << HTTPVer/binary, " ",
+					(status(Status2))/binary, "\r\n" >>,
 			HeaderLines = [[Key, <<": ">>, Value, <<"\r\n">>]
 				|| {Key, Value} <- FullHeaders2],
 			Transport:send(Socket, [StatusLine, HeaderLines, <<"\r\n">>, Body2]),
