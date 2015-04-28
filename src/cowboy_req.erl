@@ -1188,9 +1188,7 @@ response(Status, Headers, RespHeaders, DefaultHeaders, Body, Req=#http_req{
 			ReqPid ! {?MODULE, resp_sent},
 			normal;
 		RespState when RespState =:= waiting; RespState =:= waiting_stream ->
-			HTTPVer = atom_to_binary(Version, latin1),
-			StatusLine = << HTTPVer/binary, " ",
-				(status(Status2))/binary, "\r\n" >>,
+			StatusLine = <<(status(Status2))/binary, "\r\n" >>,
 			HeaderLines = [[Key, <<": ">>, Value, <<"\r\n">>]
 				|| {Key, Value} <- FullHeaders2],
 			Transport:send(Socket, [StatusLine, HeaderLines, <<"\r\n">>, Body2]),
@@ -1317,6 +1315,7 @@ status(506) -> <<"506 Variant Also Negotiates">>;
 status(507) -> <<"507 Insufficient Storage">>;
 status(510) -> <<"510 Not Extended">>;
 status(511) -> <<"511 Network Authentication Required">>;
+status(I) when is_integer(I) -> integer_to_binary(I);
 status(B) when is_binary(B) -> B.
 
 %% Tests.
